@@ -22,10 +22,12 @@
             "charts": true,
             "reportPageTitle": "Tackle test report",
             "embeddedScreenshots": true,
-            "inlineAssets": true
+            "inlineAssets": true,
+	    "outputPending": true
         },
         "mochaJunitReporterReporterOptions": {
-            "mochaFile": "cypress/reports/junit/results-[hash].xml"
+            "mochaFile": "cypress/reports/junit/results-[hash].xml",
+	    "includePending": true	    
         }
     },
     "defaultCommandTimeout": 8000
