@@ -28,3 +28,4 @@ describe("Log In", () => {
         cy.get("h1").should("contain", "Application inventory");
     });
 });
+ 

@@ -10,11 +10,24 @@ pipeline{
     agent {
         label 'minikube-node' 
     }
-    environment{
-        TACKLE_USER = "admin"
-        TACKLE_PASSWORD = "Passw0rd!"
+    options{
+        ansiColor('xterm')
     }
-    
+    environment{
+        REQUESTS_CA_BUNDLE="/etc/pki/tls/certs/ca-bundle.crt"
+        username="admin"
+        password="Dog8code"
+        TACKLE_GIT_CREDS = credentials('tackle_git_pass')
+        TACKLE_GIT_KEY = credentials('tackle_git_gpg_key')
+        cypress_jira_atlassian_cloud_url="https://mta-qe-testing.atlassian.net/"
+        cypress_jira_atlassian_cloud_email="mta.qe.testing@gmail.com"
+        cypress_jira_stage_datacenter_url="https://issues.stage.redhat.com"
+        cypress_jira_stage_bearer_token= credentials('mta_jira_stage_token')
+        cypress_jira_atlassian_cloud_token= credentials('mta_jira_cloud_token')
+        cypress_jira_stage_basic_login="mta-qe"
+        cypress_jira_stage_basic_password="Mta.qe.testing"
+        cypress_jira_atlassian_cloud_project="mta_integration"
+    }
     stages{
         stage("Check if their are changed tests"){
             when{
@@ -51,33 +64,33 @@ pipeline{
             steps{
                 script{
                     
-                    // sh """ curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-                    //         chmod +x minikube
-                    //         minikube_homedir=/usr/local/bin/
+                    sh """ curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+                            chmod +x minikube
+                            minikube_homedir=/usr/local/bin/
 
-                    //         sudo install minikube /usr/local/bin
+                            sudo install minikube /usr/local/bin
 
-                    //         minikube delete
-                    //         sleep 20s
-                    //         minikube start --driver=podman --memory=4g
-                    //         minikube addons enable dashboard
-                    //         minikube addons enable ingress
-                    //         minikube addons enable olm
-                    //         kubectl apply -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/upstream/quickstart/crds.yaml
-                    //         kubectl apply -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/upstream/quickstart/olm.yaml
+                            minikube delete
+                            sleep 20s
+                            minikube start --driver=podman --memory=4g
+                            minikube addons enable dashboard
+                            minikube addons enable ingress
+                            minikube addons enable olm
+                            kubectl apply -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/upstream/quickstart/crds.yaml
+                            kubectl apply -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/upstream/quickstart/olm.yaml
 
-                    //         kubectl apply -f https://raw.githubusercontent.com/konveyor/tackle2-operator/main/tackle-k8s.yaml
+                            kubectl apply -f https://raw.githubusercontent.com/konveyor/tackle2-operator/main/tackle-k8s.yaml
 
-                    //         while [ \$(kubectl get crd|grep tackle|wc -l) != 2 ]
-                    //         do echo "Waiting for Tackle CRDs..."
-                    //         sleep 5s
-                    //         done
+                            while [ \$(kubectl get crd|grep tackle|wc -l) != 2 ]
+                            do echo "Waiting for Tackle CRDs..."
+                            sleep 5s
+                            done
 
-                    //         """
+                            """
 
-                    //         echo "Applying tackle CR"
-                    //         tackle.applyTackleCR() //Tackle CR will be applied with using default password `Passw0rd!`.
-                    echo "skipped for now"
+                            echo "Applying tackle CR"
+                            tackle.applyTackleCR() //Tackle CR will be applied with using default password `Passw0rd!`.
+                    
                 }
             }
         }
@@ -96,10 +109,14 @@ pipeline{
 
                     ocp.pollRouteUntilReady(env.TACKLE_URL,15,30)
                     sh "sleep 40s" //Grace period after the application is serving correctly.
+                    sh(
+                        script: "npm install",
+                        label: "Install dependencies..."
+                    )
                     //Run the tests.
-                    dir('./tackle-ui-tests'){
-                        echo "Here."
-                    }
+                        sh """ 
+                        npx cypress run --spec $CHANGED_TEST_FILES --env user=$username,pass=$password,tackleUrl=$TACKLE_URL,git_user=$TACKLE_GIT_CREDS_USR,git_password=$TACKLE_GIT_CREDS_PSW,git_key='$TACKLE_GIT_KEY'
+                        """ 
                 }
             }
         }
