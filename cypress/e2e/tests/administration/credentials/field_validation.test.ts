@@ -30,6 +30,6 @@ describe(["@tier2"], "Credentials fields validations", function () {
     });
 
     it("Validate Source control credential's fields for too short (2 symbols) and too long (120+ symbols) length ", () => {
-        CredentialsSourceControlUsername.validateFields();
+        CredentialsSourceControlUsername.validateFields();  
     });
 });
