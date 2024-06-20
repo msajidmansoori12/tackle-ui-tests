@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-/// <reference types="cypress" />
+/// <reference types="cypress" /> 
 
 import { login } from "../../../../utils/utils";
 import { CredentialsProxy } from "../../../models/administration/credentials/credentialsProxy";

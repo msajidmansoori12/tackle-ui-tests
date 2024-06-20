@@ -12,7 +12,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
+*/ 
 import * as faker from "faker";
 import { CredentialType, CustomRuleType, JiraType, UserCredentials } from "../e2e/types/constants";
 import { writeGpgKey, writeMavenSettingsFile } from "./utils";
