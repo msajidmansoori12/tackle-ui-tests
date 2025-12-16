@@ -40,6 +40,8 @@
         "cypress-tags": "^1.1.2",
         "license-check-and-add": "^4.0.5",
         "prettier-plugin-organize-imports": "^4.1.0",
-        "typedoc": "^0.23.28"
+        "typedoc": "^0.23.28",
+        "mochawesome-merge": "^4.4.1",
+        "table": "^6.9.0"
     }
 }
